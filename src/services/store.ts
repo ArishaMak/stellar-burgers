@@ -1,33 +1,28 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import constructorSlice from './slices/constructorSlice';
-import orderSlice from './slices/orderSlice';
-import feedSlice from './slices/feedSlice';
-import userSlice from './slices/userSlice';
-import ingredientSlice from './slices/ingredientSlice';
-import {
-  TypedUseSelectorHook,
-  useDispatch as dispatchHook,
-  useSelector as selectorHook
-} from 'react-redux';
+// services/store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-const rootReducer = combineReducers({
-  ingredient: ingredientSlice,
-  order: orderSlice,
-  constructorBurger: constructorSlice,
-  feed: feedSlice,
-  user: userSlice
-});
+import ingredientsReducer from './slices/ingredientsSlice';
+import feedSliceReducer from './slices/feedSlice';
+import ordersSliceReducer from './slices/ordersSlice';
+import userSliceReducer from './slices/userSlice';
+
+const rootReducer = {
+  ingredients: ingredientsReducer,
+  feed: feedSliceReducer,
+  orders: ordersSliceReducer,
+  user: userSliceReducer,
+};
 
 const store = configureStore({
   reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production'
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
-
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export const useDispatch: () => AppDispatch = () => dispatchHook();
-export const useSelector: TypedUseSelectorHook<RootState> = selectorHook;
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export default store;
