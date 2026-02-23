@@ -1,18 +1,20 @@
 import { FC, useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '@utils-types';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   orderBurger,
   resetModal,
   selectConstructor
-} from '@services/constructorSlice';
-import { TConstructorIngredient } from '@utils-types';
+} from '../../services/constructorSlice'; // Относительный путь
+import { TConstructorIngredient } from '../../utils-types'; // Относительный путь
 import { BurgerConstructorUI } from '@ui';
+import { RootState, AppDispatch } from '../../services/store'; // Импорт типов напрямую
 
 export const BurgerConstructor: FC = () => {
-  const dispatch = useAppDispatch();
-
-  // Берем данные ИЗ REDUX STORE
-  const { constructorItems, orderRequest, orderModalData } = useAppSelector(selectConstructor);
+  // Типизированные хуки напрямую из store
+  const dispatch = useDispatch<AppDispatch>();
+  const { constructorItems, orderRequest, orderModalData } = useSelector(
+    selectConstructor as (state: RootState) => any
+  );
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;

@@ -1,7 +1,8 @@
 import { FC, memo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAppDispatch } from '@utils-types';
-import { addIngredient } from '@services/constructorSlice';
+import { useDispatch } from 'react-redux';
+import { addIngredient } from '../../services/constructorSlice';
+import { RootState, AppDispatch } from '../../services/store';
 
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
@@ -9,10 +10,9 @@ import { TBurgerIngredientProps } from './type';
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
   ({ ingredient, count }) => {
     const location = useLocation();
-    const dispatch = useAppDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleAdd = () => {
-      // Добавляем ингредиент в конструктор через Redux
       dispatch(addIngredient(ingredient));
     };
 

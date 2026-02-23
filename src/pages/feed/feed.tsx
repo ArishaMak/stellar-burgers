@@ -1,20 +1,28 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
-import { useSelector, useDispatch } from '@store';
-import { getFeedState, getFeeds } from '@slices/feedSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { getFeeds } from '../../services/slices/feedSlice';
+import { RootState, AppDispatch } from '../../services/store';
+import { TOrder } from '../../utils-types';
 
 export const Feed: FC = () => {
-  const { orders, loading } = useSelector(getFeedState);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // ✅ Исправлено: правильный селектор для состояния feed
+  const { orders, loading } = useSelector((state: RootState) => state.feed);
 
   useEffect(() => {
     dispatch(getFeeds());
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return <Preloader />;
   }
 
-  return <FeedUI orders={orders} handleGetFeeds={() => dispatch(getFeeds())} />;
+  const handleGetFeeds = () => {
+    dispatch(getFeeds());
+  };
+
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };
