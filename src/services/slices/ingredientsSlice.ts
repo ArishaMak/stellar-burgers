@@ -1,6 +1,8 @@
 import { getIngredientsApi } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
+// ИМПОРТ RootState из стора, так как в types.ts его больше нет
+import { RootState } from '../store';
 
 export type TIngredientState = {
     ingredients: TIngredient[];
@@ -16,16 +18,17 @@ const initialState: TIngredientState = {
 
 export const getIngredients = createAsyncThunk(
     'ingredient/get',
-    getIngredientsApi
+    async () => {
+        const response = await getIngredientsApi();
+        // API обычно возвращает { success: true, data: [...] }
+        return response.data || response;
+    }
 );
 
 export const ingredientSlice = createSlice({
     name: 'ingredient',
     initialState,
     reducers: {},
-    selectors: {
-        getIngredientState: (state) => state
-    },
     extraReducers: (builder) => {
         builder
             .addCase(getIngredients.pending, (state) => {
@@ -34,7 +37,7 @@ export const ingredientSlice = createSlice({
             })
             .addCase(getIngredients.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message as string;
+                state.error = action.error.message || 'Ошибка загрузки ингредиентов';
             })
             .addCase(getIngredients.fulfilled, (state, action) => {
                 state.loading = false;
@@ -44,5 +47,10 @@ export const ingredientSlice = createSlice({
     }
 });
 
-export const { getIngredientState } = ingredientSlice.selectors;
+// Селекторы вынесены отдельно согласно ТЗ и стандартам RTK
+
+export const selectIngredients = (state: RootState) => state.ingredient.ingredients;
+export const selectIngredientsLoading = (state: RootState) => state.ingredient.loading;
+export const selectIngredientsError = (state: RootState) => state.ingredient.error;
+
 export default ingredientSlice.reducer;

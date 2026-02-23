@@ -1,36 +1,46 @@
 import { FC, useMemo } from 'react';
+import { useAppDispatch, useAppSelector } from '@utils-types';
+import {
+  orderBurger,
+  resetModal,
+  selectConstructor
+} from '@services/constructorSlice';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
-  };
+  const dispatch = useAppDispatch();
 
-  const orderRequest = false;
-
-  const orderModalData = null;
+  // Берем данные ИЗ REDUX STORE
+  const { constructorItems, orderRequest, orderModalData } = useAppSelector(selectConstructor);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
+
+    // Формируем массив _id для API
+    const ingredients = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((ingredient: TConstructorIngredient) => ingredient._id),
+      constructorItems.bun._id
+    ];
+
+    dispatch(orderBurger(ingredients));
   };
-  const closeOrderModal = () => {};
 
-  const price = useMemo(
-    () =>
-      (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
+  const closeOrderModal = () => {
+    dispatch(resetModal());
+  };
+
+  const price = useMemo(() => {
+    if (!constructorItems.bun) return 0;
+    return (
+      constructorItems.bun.price * 2 +
       constructorItems.ingredients.reduce(
-        (s: number, v: TConstructorIngredient) => s + v.price,
+        (sum: number, ingredient: TConstructorIngredient) => sum + ingredient.price,
         0
-      ),
-    [constructorItems]
-  );
-
-  return null;
+      )
+    );
+  }, [constructorItems]);
 
   return (
     <BurgerConstructorUI
