@@ -4,12 +4,11 @@ import { FC, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getFeeds } from '../../services/slices/feedSlice';
 import { RootState, AppDispatch } from '../../services/store';
-import { TOrder } from '../../utils-types';
+import { TOrder } from '../../utils/utils-types';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // ✅ Исправлено: правильный селектор для состояния feed
   const { orders, loading } = useSelector((state: RootState) => state.feed);
 
   useEffect(() => {

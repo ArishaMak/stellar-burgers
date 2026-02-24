@@ -9,7 +9,7 @@ import ingredientsReducer from './slices/ingredientsSlice';
 import feedSliceReducer from './slices/feedSlice';
 import orderSliceReducer from './slices/orderSlice'; 
 import userSliceReducer from './slices/userSlice';
-import constructorReducer from './constructorSlice';
+import constructorReducer from './slices/constructorSlice';
 
 const store = configureStore({
   reducer: {

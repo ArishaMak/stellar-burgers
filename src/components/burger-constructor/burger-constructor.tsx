@@ -1,32 +1,34 @@
 import { FC, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
   orderBurger,
   resetModal,
-  selectConstructor
-} from '../../services/constructorSlice'; // Относительный путь
-import { TConstructorIngredient } from '../../utils-types'; // Относительный путь
+} from '../../services/slices/constructorSlice';
+
+import { TConstructorIngredient } from '../../utils/utils-types';
+
 import { BurgerConstructorUI } from '@ui';
-import { RootState, AppDispatch } from '../../services/store'; // Импорт типов напрямую
+
+import { RootState, AppDispatch } from '../../services/store';
 
 export const BurgerConstructor: FC = () => {
-  // Типизированные хуки напрямую из store
   const dispatch = useDispatch<AppDispatch>();
+
   const { constructorItems, orderRequest, orderModalData } = useSelector(
-    selectConstructor as (state: RootState) => any
+    (state: RootState) => state.burgerConstructor
   );
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
 
-    // Формируем массив _id для API
-    const ingredients = [
+    const ingredientsIds = [
       constructorItems.bun._id,
-      ...constructorItems.ingredients.map((ingredient: TConstructorIngredient) => ingredient._id),
-      constructorItems.bun._id
+      ...constructorItems.ingredients.map((ing: TConstructorIngredient) => ing._id),
+      constructorItems.bun._id,
     ];
 
-    dispatch(orderBurger(ingredients));
+    dispatch(orderBurger(ingredientsIds));
   };
 
   const closeOrderModal = () => {
@@ -35,13 +37,14 @@ export const BurgerConstructor: FC = () => {
 
   const price = useMemo(() => {
     if (!constructorItems.bun) return 0;
-    return (
-      constructorItems.bun.price * 2 +
-      constructorItems.ingredients.reduce(
-        (sum: number, ingredient: TConstructorIngredient) => sum + ingredient.price,
-        0
-      )
+
+    const bunPrice = constructorItems.bun.price;
+    const ingredientsPrice = constructorItems.ingredients.reduce(
+      (sum: number, ing: TConstructorIngredient) => sum + ing.price,
+      0
     );
+
+    return bunPrice * 2 + ingredientsPrice;
   }, [constructorItems]);
 
   return (

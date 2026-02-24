@@ -1,3 +1,9 @@
+import { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+
+import '../../index.css';
+import styles from './app.module.css';
+
 import {
   ConstructorPage,
   Feed,
@@ -8,26 +14,20 @@ import {
   ProfileOrders,
   Register,
   ResetPassword
-} from '@pages';
-import '../../index.css';
-import styles from './app.module.css';
+} from '../../pages';
 
-import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { ProtectedRoute } from '../protected-route/protected-route';
-// Используем типизированный dispatch из стора
-import { useAppDispatch } from '@store';
-import { getIngredients } from '@slices/ingredientsSlice';
-import { useEffect } from 'react';
-import { getUser } from '@slices/userSlice';
-import { CenteringComponent } from '../centering-component';
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '../index';
+import { CenteringComponent } from '../centering-component/centering-component';
+import { ProtectedRoute } from '../protected-route';
+
+import { useAppDispatch } from '../../services/store';
+import { getIngredients } from '../../services/slices/ingredientsSlice';
+import { getUser } from '../../services/slices/userSlice';
 
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  // Получаем фоновую локацию для модалок
   const background = location.state?.background;
 
   useEffect(() => {
@@ -35,16 +35,15 @@ const App = () => {
     dispatch(getIngredients());
   }, [dispatch]);
 
-  // Функция для закрытия модалок
   const handleModalClose = () => navigate(-1);
 
   return (
     <div className={styles.app}>
       <AppHeader />
 
-      {/* Основные маршруты */}
       <Routes location={background || location}>
         <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
 
         <Route
           path='/ingredients/:id'
@@ -55,43 +54,31 @@ const App = () => {
           }
         />
 
-        <Route path='/feed' element={<Feed />} />
+        {/* Публичные роуты (только для неавторизованных) */}
+        <Route path='/login' element={<ProtectedRoute onlyUnAuth element={<Login />} />} />
+        <Route path='/register' element={<ProtectedRoute onlyUnAuth element={<Register />} />} />
+        <Route path='/forgot-password' element={<ProtectedRoute onlyUnAuth element={<ForgotPassword />} />} />
+        <Route path='/reset-password' element={<ProtectedRoute onlyUnAuth element={<ResetPassword />} />} />
 
+        {/* Защищенные роуты (только для авторизованных) */}
+        <Route path='/profile' element={<ProtectedRoute element={<Profile />} />} />
+        <Route path='/profile/orders' element={<ProtectedRoute element={<ProfileOrders />} />} />
         <Route
-          path='/feed/:number'
+          path='/profile/orders/:number'
           element={
-            <CenteringComponent title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}>
-              <OrderInfo />
-            </CenteringComponent>
+            <ProtectedRoute
+              element={
+                <CenteringComponent title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}>
+                  <OrderInfo />
+                </CenteringComponent>
+              }
+            />
           }
         />
-
-        {/* Роуты только для неавторизованных */}
-        <Route element={<ProtectedRoute onlyUnAuth />}>
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route path='/reset-password' element={<ResetPassword />} />
-        </Route>
-
-        {/* Защищенные роуты профиля */}
-        <Route element={<ProtectedRoute onlyUnAuth={false} />}>
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/profile/orders' element={<ProfileOrders />} />
-          <Route
-            path='/profile/orders/:number'
-            element={
-              <CenteringComponent title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}>
-                <OrderInfo />
-              </CenteringComponent>
-            }
-          />
-        </Route>
 
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      {/* Модальные маршруты (рисуются поверх background) */}
       {background && (
         <Routes>
           <Route
@@ -102,32 +89,26 @@ const App = () => {
               </Modal>
             }
           />
-
           <Route
             path='/feed/:number'
             element={
-              <Modal
-                title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}
-                onClose={handleModalClose}
-              >
+              <Modal title={`#${location.pathname.match(/\d+/)?.[0] || ''}`} onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
           />
-
-          <Route element={<ProtectedRoute onlyUnAuth={false} />}>
-            <Route
-              path='/profile/orders/:number'
-              element={
-                <Modal
-                  title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}
-                  onClose={handleModalClose}
-                >
-                  <OrderInfo />
-                </Modal>
-              }
-            />
-          </Route>
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute
+                element={
+                  <Modal title={`#${location.pathname.match(/\d+/)?.[0] || ''}`} onClose={handleModalClose}>
+                    <OrderInfo />
+                  </Modal>
+                }
+              />
+            }
+          />
         </Routes>
       )}
     </div>

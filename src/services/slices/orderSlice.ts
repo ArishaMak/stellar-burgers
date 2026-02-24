@@ -1,6 +1,6 @@
 import { getOrderByNumberApi } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TOrder } from '@utils-types';
+import { TOrder } from 'src/utils/utils-types';
 
 type TOrderState = {
     orders: TOrder[];
@@ -26,7 +26,7 @@ export const getOrderByNumber = createAsyncThunk(
 export const orderSlice = createSlice({
     name: 'order',
     initialState,
-    reducers: {}, 
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(getOrderByNumber.pending, (state) => {

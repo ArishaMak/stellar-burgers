@@ -4,11 +4,10 @@ import { useInView } from 'react-intersection-observer';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 import { RootState } from '../../services/store';
 
-import { TTabMode, TIngredient } from '../../utils-types';
+import { TTabMode, TIngredient } from '../../utils/utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  // ✅ ИСПРАВЛЕНО: стандартный useSelector вместо useAppSelector
   const ingredients = useSelector(selectIngredients as (state: RootState) => TIngredient[]);
 
   // Группируем по типам (TTabMode)

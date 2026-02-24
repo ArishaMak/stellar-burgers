@@ -3,11 +3,16 @@ import {
     PayloadAction,
     createAsyncThunk,
     createSlice,
-    nanoid
+    nanoid,
 } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
 
-export type TConsturctorState = {
+import {
+    TConstructorIngredient,
+    TIngredient,
+    TOrder,
+} from '../../utils/utils-types';
+
+export type TConstructorState = {
     loading: boolean;
     constructorItems: {
         bun: TConstructorIngredient | null;
@@ -18,28 +23,41 @@ export type TConsturctorState = {
     error: string | null;
 };
 
-export const initialState: TConsturctorState = {
+export const initialState: TConstructorState = {
     loading: false,
     constructorItems: {
         bun: null,
-        ingredients: []
+        ingredients: [],
     },
     orderRequest: false,
     orderModalData: null,
-    error: null
+    error: null,
 };
 
-export const orderBurger = createAsyncThunk(
-    'user/order',
-    async (data: string[]) => orderBurgerApi(data)
-);
+export const orderBurger = createAsyncThunk<
+    { order: TOrder },
+    string[],
+    { rejectValue: string }
+>('constructor/orderBurger', async (ingredientsIds, { rejectWithValue }) => {
+    try {
+        const response = await orderBurgerApi(ingredientsIds);
+        return response;
+    } catch (err: any) {
+        return rejectWithValue(err.message || 'Не удалось оформить заказ');
+    }
+});
 
-export const constructorSlice = createSlice({
-    name: 'constructorBurger',
+const constructorSlice = createSlice({
+    name: 'constructor',
     initialState,
+
     selectors: {
-        getConstructorState: (state) => state
+        getConstructorState: (state) => state,
+        selectConstructorItems: (state) => state.constructorItems,
+        selectOrderRequest: (state) => state.orderRequest,
+        selectOrderModalData: (state) => state.orderModalData,
     },
+
     reducers: {
         addIngredient: {
             reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
@@ -49,41 +67,49 @@ export const constructorSlice = createSlice({
                     state.constructorItems.ingredients.push(action.payload);
                 }
             },
-            prepare: (ingredient: TIngredient) => {
-                const id = nanoid();
-                return { payload: { ...ingredient, id } };
-            }
+            prepare: (ingredient: TIngredient) => ({
+                payload: { ...ingredient, id: nanoid() },
+            }),
         },
+
         removeIngredient: (state, action: PayloadAction<string>) => {
-            state.constructorItems.ingredients =
-                state.constructorItems.ingredients.filter(
-                    (i) => i.id !== action.payload
-                );
+            state.constructorItems.ingredients = state.constructorItems.ingredients.filter(
+                (item: TConstructorIngredient) => item.id !== action.payload,  // ← явный тип
+            );
         },
+
         moveIngredientUp: (state, action: PayloadAction<number>) => {
-            state.constructorItems.ingredients.splice(
-                action.payload,
-                0,
-                state.constructorItems.ingredients.splice(action.payload - 1, 1)[0]
-            );
+            const index = action.payload;
+            if (index <= 0) return;
+
+            const items = state.constructorItems.ingredients;
+            if (index >= items.length) return;
+
+            const [movedItem] = items.splice(index - 1, 1) as [TConstructorIngredient];
+            items.splice(index - 1 + 1, 0, movedItem);
         },
+
         moveIngredientDown: (state, action: PayloadAction<number>) => {
-            state.constructorItems.ingredients.splice(
-                action.payload,
-                0,
-                state.constructorItems.ingredients.splice(action.payload + 1, 1)[0]
-            );
+            const index = action.payload;
+            const items = state.constructorItems.ingredients;
+            if (index < 0 || index >= items.length - 1) return;
+
+            const [movedItem] = items.splice(index, 1) as [TConstructorIngredient];
+            items.splice(index + 1, 0, movedItem);
         },
-        setRequest: (state, action) => {
-            state.orderRequest = action.payload;
+
+        clearConstructor: (state) => {
+            state.constructorItems = { bun: null, ingredients: [] };
         },
+
         resetModal: (state) => {
             state.orderModalData = null;
-        }
+        },
     },
+
     extraReducers: (builder) => {
         builder
-            .addCase(orderBurger.pending, (state, action) => {
+            .addCase(orderBurger.pending, (state) => {
                 state.loading = true;
                 state.orderRequest = true;
                 state.error = null;
@@ -91,7 +117,7 @@ export const constructorSlice = createSlice({
             .addCase(orderBurger.rejected, (state, action) => {
                 state.loading = false;
                 state.orderRequest = false;
-                state.error = action.error.message as string;
+                state.error = action.payload ?? 'Неизвестная ошибка при создании заказа';
             })
             .addCase(orderBurger.fulfilled, (state, action) => {
                 state.loading = false;
@@ -100,10 +126,10 @@ export const constructorSlice = createSlice({
                 state.orderModalData = action.payload.order;
                 state.constructorItems = {
                     bun: null,
-                    ingredients: []
+                    ingredients: [],
                 };
             });
-    }
+    },
 });
 
 export const {
@@ -111,9 +137,15 @@ export const {
     removeIngredient,
     moveIngredientUp,
     moveIngredientDown,
-    setRequest,
-    resetModal
+    clearConstructor,
+    resetModal,
 } = constructorSlice.actions;
 
-export const { getConstructorState } = constructorSlice.selectors;
+export const {
+    getConstructorState,
+    selectConstructorItems,
+    selectOrderRequest,
+    selectOrderModalData,
+} = constructorSlice.selectors;
+
 export default constructorSlice.reducer;

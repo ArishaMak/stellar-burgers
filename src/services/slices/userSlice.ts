@@ -1,11 +1,14 @@
 import {
-    TRegisterData, TLoginData, TUser,
-    registerUserApi, loginUserApi, getUserApi,
-    getOrdersApi, logoutApi, updateUserApi
-} from '@api';
+    registerUserApi,
+    loginUserApi,
+    getUserApi,
+    logoutApi,
+    TRegisterData,
+    TLoginData
+} from '../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { deleteCookie, setCookie } from '../../utils/cookie';
-import { TOrder } from '@utils-types';
+import { deleteCookie } from '../../utils/cookie';
+import { TOrder, TUser } from '../../utils/utils-types';
 
 type TUserState = {
     request: boolean;
@@ -31,6 +34,7 @@ const initialState: TUserState = {
     userOrders: []
 };
 
+// Хендлеры API
 export const registerUser = createAsyncThunk('user/regUser', registerUserApi);
 export const loginUser = createAsyncThunk('user/loginUser', loginUserApi);
 export const getUser = createAsyncThunk('user/getUser', getUserApi);

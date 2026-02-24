@@ -1,6 +1,6 @@
 import { forwardRef, useMemo } from 'react';
 import { TIngredientsCategoryProps } from './type';
-import { TIngredient } from '@utils-types';
+import { TIngredient } from 'src/utils/utils-types';
 import { IngredientsCategoryUI } from '../ui/ingredients-category';
 
 export const IngredientsCategory = forwardRef<

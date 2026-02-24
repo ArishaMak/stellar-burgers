@@ -1,9 +1,8 @@
-// pages/home/index.tsx
 import { FC, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@utils-types';
-import { getIngredients } from '@services/slices/ingredientsSlice';
-import { BurgerIngredients } from '@components/burger-ingredients';
-import { BurgerConstructor } from '@components/burger-constructor';
+import { useAppDispatch } from '../../services/store'; // Импорт из стора
+import { getIngredients } from '../../services/slices/ingredientsSlice';
+import { BurgerIngredients } from '../../components/burger-ingredients';
+import { BurgerConstructor } from '../../components/burger-constructor';
 
 export const ConstructorPage: FC = () => {
     const dispatch = useAppDispatch();
@@ -19,3 +18,5 @@ export const ConstructorPage: FC = () => {
         </main>
     );
 };
+
+export default ConstructorPage;

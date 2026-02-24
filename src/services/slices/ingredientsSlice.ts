@@ -1,7 +1,6 @@
-import { getIngredientsApi } from '@api';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TIngredient } from '@utils-types';
-// ИМПОРТ RootState из стора, так как в types.ts его больше нет
+import { getIngredientsApi } from '../../utils/burger-api'; // Используем относительный путь
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TIngredient } from '../../utils/utils-types';
 import { RootState } from '../store';
 
 export type TIngredientState = {
@@ -16,12 +15,15 @@ const initialState: TIngredientState = {
     error: null
 };
 
-export const getIngredients = createAsyncThunk(
+// Исправляем Thunk: явно указываем, что он возвращает массив TIngredient[]
+export const getIngredients = createAsyncThunk<TIngredient[]>(
     'ingredient/get',
     async () => {
         const response = await getIngredientsApi();
-        // API обычно возвращает { success: true, data: [...] }
-        return response.data || response;
+        // Если getIngredientsApi возвращает напрямую массив, оставляем response
+        // Если же там объект с полем data, оставляем response.data
+        // Судя по ошибке TS2339, API возвращает TIngredient[] напрямую.
+        return response;
     }
 );
 
@@ -39,7 +41,7 @@ export const ingredientSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message || 'Ошибка загрузки ингредиентов';
             })
-            .addCase(getIngredients.fulfilled, (state, action) => {
+            .addCase(getIngredients.fulfilled, (state, action: PayloadAction<TIngredient[]>) => {
                 state.loading = false;
                 state.error = null;
                 state.ingredients = action.payload;
@@ -47,8 +49,7 @@ export const ingredientSlice = createSlice({
     }
 });
 
-// Селекторы вынесены отдельно согласно ТЗ и стандартам RTK
-
+// Селекторы
 export const selectIngredients = (state: RootState) => state.ingredient.ingredients;
 export const selectIngredientsLoading = (state: RootState) => state.ingredient.loading;
 export const selectIngredientsError = (state: RootState) => state.ingredient.error;
