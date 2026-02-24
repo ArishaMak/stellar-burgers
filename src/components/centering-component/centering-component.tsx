@@ -11,17 +11,18 @@ export const CenteringComponent: FC<TCentering> = memo(
         useEffect(() => {
             if (/feed|profile/i.test(location.pathname)) {
                 setTitleStyle('text_type_digits-default');
+            } else {
+                setTitleStyle('text_type_main-large');
             }
-        }, []);
+        }, [location.pathname]); // Добавлена зависимость для отслеживания переходов
 
         return (
-            <>
-                <CenteringComponentUI
-                    title={title}
-                    titleStyle={titleStyle}
-                    children={children}
-                />
-            </>
+            <CenteringComponentUI
+                title={title}
+                titleStyle={titleStyle}
+            >
+                {children}
+            </CenteringComponentUI>
         );
     }
 );
