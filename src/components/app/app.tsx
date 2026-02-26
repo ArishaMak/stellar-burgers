@@ -12,7 +12,8 @@ import {
   NotFound404,
   Profile,
   ProfileOrders,
-  Register
+  Register,
+  ResetPassword
 } from '../../pages';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '../index';
