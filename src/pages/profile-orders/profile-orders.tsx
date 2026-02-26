@@ -1,5 +1,5 @@
 import { ProfileOrdersUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
+import { TOrder } from 'src/utils/utils-types';
 import { FC } from 'react';
 
 export const ProfileOrders: FC = () => {

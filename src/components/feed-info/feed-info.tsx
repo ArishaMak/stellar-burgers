@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { TOrder } from '@utils-types';
+import { TOrder } from 'src/utils/utils-types';
 import { FeedInfoUI } from '../ui/feed-info';
 
 const getOrders = (orders: TOrder[], status: string): number[] =>
