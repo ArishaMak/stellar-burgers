@@ -8,7 +8,7 @@ import { TOrder } from '../../utils/utils-types';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-
+  // @ts-ignore
   const { orders, loading } = useSelector((state: RootState) => state.feed);
 
   useEffect(() => {
