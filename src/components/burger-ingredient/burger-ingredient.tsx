@@ -17,7 +17,9 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const count = useMemo(() => {
       // 1. Проверяем булку (учитываем, что в стейте она может быть объектом или null)
       if (ingredient.type === 'bun') {
-        return constructorState.constructorItems.bun?._id === ingredient._id ? 2 : 0;
+        return constructorState.constructorItems.bun?._id === ingredient._id
+          ? 2
+          : 0;
       }
 
       // 2. Проверяем остальные ингредиенты (в массиве constructorItems.ingredients)

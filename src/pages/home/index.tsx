@@ -5,18 +5,18 @@ import { BurgerIngredients } from '../../components/burger-ingredients';
 import { BurgerConstructor } from '../../components/burger-constructor';
 
 export const ConstructorPage: FC = () => {
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(getIngredients());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, [dispatch]);
 
-    return (
-        <main className="constructor">
-            <BurgerIngredients />
-            <BurgerConstructor />
-        </main>
-    );
+  return (
+    <main className='constructor'>
+      <BurgerIngredients />
+      <BurgerConstructor />
+    </main>
+  );
 };
 
 export default ConstructorPage;

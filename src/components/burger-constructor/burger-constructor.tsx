@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
   orderBurger,
-  resetModal,
+  resetModal
 } from '../../services/slices/constructorSlice';
 
 import { TConstructorIngredient } from '../../utils/utils-types';
@@ -24,8 +24,10 @@ export const BurgerConstructor: FC = () => {
 
     const ingredientsIds = [
       constructorItems.bun._id,
-      ...constructorItems.ingredients.map((ing: TConstructorIngredient) => ing._id),
-      constructorItems.bun._id,
+      ...constructorItems.ingredients.map(
+        (ing: TConstructorIngredient) => ing._id
+      ),
+      constructorItems.bun._id
     ];
 
     dispatch(orderBurger(ingredientsIds));

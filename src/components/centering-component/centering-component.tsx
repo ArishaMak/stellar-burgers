@@ -4,25 +4,22 @@ import { TCentering } from './type';
 import { useLocation } from 'react-router-dom';
 
 export const CenteringComponent: FC<TCentering> = memo(
-    ({ title, children }) => {
-        const location = useLocation();
-        const [titleStyle, setTitleStyle] = useState('text_type_main-large');
+  ({ title, children }) => {
+    const location = useLocation();
+    const [titleStyle, setTitleStyle] = useState('text_type_main-large');
 
-        useEffect(() => {
-            if (/feed|profile/i.test(location.pathname)) {
-                setTitleStyle('text_type_digits-default');
-            } else {
-                setTitleStyle('text_type_main-large');
-            }
-        }, [location.pathname]); // Добавлена зависимость для отслеживания переходов
+    useEffect(() => {
+      if (/feed|profile/i.test(location.pathname)) {
+        setTitleStyle('text_type_digits-default');
+      } else {
+        setTitleStyle('text_type_main-large');
+      }
+    }, [location.pathname]); // Добавлена зависимость для отслеживания переходов
 
-        return (
-            <CenteringComponentUI
-                title={title}
-                titleStyle={titleStyle}
-            >
-                {children}
-            </CenteringComponentUI>
-        );
-    }
+    return (
+      <CenteringComponentUI title={title} titleStyle={titleStyle}>
+        {children}
+      </CenteringComponentUI>
+    );
+  }
 );

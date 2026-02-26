@@ -8,12 +8,16 @@ import { TTabMode, TIngredient } from '../../utils/utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  const ingredients = useSelector(selectIngredients as (state: RootState) => TIngredient[]);
+  const ingredients = useSelector(
+    selectIngredients as (state: RootState) => TIngredient[]
+  );
 
   // Группируем по типам (TTabMode)
   const buns = ingredients.filter((ingredient) => ingredient.type === 'bun');
   const mains = ingredients.filter((ingredient) => ingredient.type === 'main');
-  const sauces = ingredients.filter((ingredient) => ingredient.type === 'sauce');
+  const sauces = ingredients.filter(
+    (ingredient) => ingredient.type === 'sauce'
+  );
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -36,9 +40,12 @@ export const BurgerIngredients: FC = () => {
 
   const onTabClick = (tab: string) => {
     setCurrentTab(tab as TTabMode);
-    if (tab === 'bun') titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'main') titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'sauce') titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'bun')
+      titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'main')
+      titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'sauce')
+      titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

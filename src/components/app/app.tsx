@@ -55,20 +55,40 @@ const App = () => {
         />
 
         {/* Публичные роуты (только для неавторизованных) */}
-        <Route path='/login' element={<ProtectedRoute onlyUnAuth element={<Login />} />} />
-        <Route path='/register' element={<ProtectedRoute onlyUnAuth element={<Register />} />} />
-        <Route path='/forgot-password' element={<ProtectedRoute onlyUnAuth element={<ForgotPassword />} />} />
-        <Route path='/reset-password' element={<ProtectedRoute onlyUnAuth element={<ResetPassword />} />} />
+        <Route
+          path='/login'
+          element={<ProtectedRoute onlyUnAuth element={<Login />} />}
+        />
+        <Route
+          path='/register'
+          element={<ProtectedRoute onlyUnAuth element={<Register />} />}
+        />
+        <Route
+          path='/forgot-password'
+          element={<ProtectedRoute onlyUnAuth element={<ForgotPassword />} />}
+        />
+        <Route
+          path='/reset-password'
+          element={<ProtectedRoute onlyUnAuth element={<ResetPassword />} />}
+        />
 
         {/* Защищенные роуты (только для авторизованных) */}
-        <Route path='/profile' element={<ProtectedRoute element={<Profile />} />} />
-        <Route path='/profile/orders' element={<ProtectedRoute element={<ProfileOrders />} />} />
+        <Route
+          path='/profile'
+          element={<ProtectedRoute element={<Profile />} />}
+        />
+        <Route
+          path='/profile/orders'
+          element={<ProtectedRoute element={<ProfileOrders />} />}
+        />
         <Route
           path='/profile/orders/:number'
           element={
             <ProtectedRoute
               element={
-                <CenteringComponent title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}>
+                <CenteringComponent
+                  title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}
+                >
                   <OrderInfo />
                 </CenteringComponent>
               }
@@ -92,7 +112,10 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title={`#${location.pathname.match(/\d+/)?.[0] || ''}`} onClose={handleModalClose}>
+              <Modal
+                title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}
+                onClose={handleModalClose}
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -102,7 +125,10 @@ const App = () => {
             element={
               <ProtectedRoute
                 element={
-                  <Modal title={`#${location.pathname.match(/\d+/)?.[0] || ''}`} onClose={handleModalClose}>
+                  <Modal
+                    title={`#${location.pathname.match(/\d+/)?.[0] || ''}`}
+                    onClose={handleModalClose}
+                  >
                     <OrderInfo />
                   </Modal>
                 }
